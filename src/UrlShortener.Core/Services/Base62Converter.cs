@@ -75,6 +75,7 @@ public static class Base62Converter
     public static bool TryDecode(string base62String, out long result)
     {
         result = 0;
+        
         if(string.IsNullOrEmpty(base62String) || base62String.Length != TargetLength)
             return false;
 

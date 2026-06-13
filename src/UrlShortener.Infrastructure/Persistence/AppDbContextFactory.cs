@@ -29,7 +29,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
                 "Connection string 'DefaultConnection' not found in configuration.");
 
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
 
         return new AppDbContext(optionsBuilder.Options);
     }

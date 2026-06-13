@@ -16,37 +16,38 @@ namespace UrlShortener.Infrastructure.Persistence.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    DisplayName = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    display_name = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "urls",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:IdentitySequenceOptions", "'1000000000', '1', '', '', 'False', '1'")
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    LongUrl = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true)
+                    long_url = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_urls", x => x.Id);
+                    table.PrimaryKey("pk_urls", x => x.id);
                     table.ForeignKey(
-                        name: "FK_urls_users_CreatedBy",
-                        column: x => x.CreatedBy,
+                        name: "fk_urls_users_created_by",
+                        column: x => x.created_by,
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 });
 
@@ -54,30 +55,30 @@ namespace UrlShortener.Infrastructure.Persistence.Migrations
                 name: "url_analytics_daily",
                 columns: table => new
                 {
-                    UrlId = table.Column<long>(type: "bigint", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    ClickCount = table.Column<long>(type: "bigint", nullable: false)
+                    url_id = table.Column<long>(type: "bigint", nullable: false),
+                    date = table.Column<DateOnly>(type: "date", nullable: false),
+                    click_count = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_url_analytics_daily", x => new { x.UrlId, x.Date });
+                    table.PrimaryKey("pk_url_analytics_daily", x => new { x.url_id, x.date });
                     table.ForeignKey(
-                        name: "FK_url_analytics_daily_urls_UrlId",
-                        column: x => x.UrlId,
+                        name: "fk_url_analytics_daily_urls_url_id",
+                        column: x => x.url_id,
                         principalTable: "urls",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_urls_CreatedBy",
+                name: "ix_urls_created_by",
                 table: "urls",
-                column: "CreatedBy");
+                column: "created_by");
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_Email",
+                name: "ix_users_email",
                 table: "users",
-                column: "Email",
+                column: "email",
                 unique: true);
         }
 

@@ -20,6 +20,9 @@ public class AppDbContext : DbContext
             entity.HasKey(u => u.Id);
             entity.Property(u => u.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(u => u.Email).IsRequired();
+            entity.Property(u => u.PasswordHash)
+                  .IsRequired()
+                  .HasMaxLength(255);
             entity.HasIndex(u => u.Email).IsUnique();
         });
 
