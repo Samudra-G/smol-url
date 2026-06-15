@@ -1,4 +1,12 @@
-server:
-	dotnet run --project src/UrlShortener.Api
+BUILD=dotnet run --project src/UrlShortener.Api
 
-.PHONY: server
+server:
+	$(BUILD)
+
+dev:
+	$(BUILD) --launch-profile Development
+
+test:
+	dotnet test
+
+.PHONY: server dev test

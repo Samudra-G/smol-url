@@ -32,8 +32,11 @@ builder.Services.AddSingleton<IAnalyticsRecorder, RedisAnalyticsRecorder>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 builder.Services.AddScoped<UrlShortenerService>();
 builder.Services.AddHostedService<AnalyticsFlushWorker>();
+builder.Services.ConfigureRateLimiting();
 
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 app.MapShortenEndpoints();
 app.MapRedirectEndpoints();

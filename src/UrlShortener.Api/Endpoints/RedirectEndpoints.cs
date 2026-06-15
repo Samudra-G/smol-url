@@ -1,4 +1,5 @@
 // GET /api/urls/{shortCode}
+using UrlShortener.Api.Configuration;
 using UrlShortener.Core.Services;
 
 namespace UrlShortener.Api.Endpoints;
@@ -19,6 +20,6 @@ public static class RedirectEndpoints
             return result.IsFound
                 ? Results.Redirect(result.LongUrl!, permanent: true)
                 : Results.NotFound();
-        });
+        }).RequireRateLimiting(RateLimitConfiguration.RedirectPolicy);
     }
 }
