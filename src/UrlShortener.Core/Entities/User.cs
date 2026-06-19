@@ -4,7 +4,10 @@ public class User
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
+    public string? PasswordHash { get; set; } = string.Empty;
     public string? DisplayName { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+    public ICollection<UserExternalLogin> ExternalLogins { get; set; } = [];
 }

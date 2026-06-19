@@ -18,7 +18,7 @@ public static class RedirectEndpoints
             context.Response.Headers.CacheControl = "public, max-age=900, stale-while-revalidate=300";
             
             return result.IsFound
-                ? Results.Redirect(result.LongUrl!, permanent: true)
+                ? Results.Redirect(result.LongUrl!, permanent: false)
                 : Results.NotFound();
         }).RequireRateLimiting(RateLimitConfiguration.RedirectPolicy);
     }

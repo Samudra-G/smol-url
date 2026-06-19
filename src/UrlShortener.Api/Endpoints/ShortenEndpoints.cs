@@ -25,6 +25,7 @@ public static class ShortenEndpoints
             {
                 return Results.BadRequest(new { error = ex.Message });
             }
-        }).RequireRateLimiting(RateLimitConfiguration.ShortenPolicy); 
+        }).RequireRateLimiting(RateLimitConfiguration.ShortenPolicy) 
+          .RequireAuthorization();
     }
 }

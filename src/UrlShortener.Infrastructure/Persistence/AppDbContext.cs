@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<ShortUrl> Urls => Set<ShortUrl>();
     public DbSet<UrlAnalyticsDaily> UrlAnalyticsDaily => Set<UrlAnalyticsDaily>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<UserExternalLogin> UserExternalLogins => Set<UserExternalLogin>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,9 +23,10 @@ public class AppDbContext : DbContext
             entity.Property(u => u.Id).HasDefaultValueSql("gen_random_uuid()");
             entity.Property(u => u.Email).IsRequired();
             entity.Property(u => u.PasswordHash)
-                  .IsRequired()
                   .HasMaxLength(255);
             entity.HasIndex(u => u.Email).IsUnique();
+            entity.HasMany(u => u.RefreshTokens).WithOne(t => t.User);
+            entity.HasMany(u => u.ExternalLogins).WithOne(e => e.User);
         });
 
         modelBuilder.Entity<ShortUrl>(entity =>
@@ -52,6 +55,33 @@ public class AppDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(a => a.UrlId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("refresh_tokens");
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Id).UseIdentityAlwaysColumn();
+            entity.Property(t => t.TokenHash).IsRequired().HasMaxLength(64);
+
+            entity.HasOne(t => t.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserExternalLogin>(entity =>
+        {
+            entity.ToTable("user_external_logins");
+            // Composite PK — one row per (provider, providerKey) combination
+            entity.HasKey(e => new { e.Provider, e.ProviderKey });
+            entity.Property(e => e.Provider).HasMaxLength(50);
+            entity.Property(e => e.ProviderKey).HasMaxLength(255);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.ExternalLogins)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
